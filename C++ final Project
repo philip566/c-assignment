@@ -1,0 +1,84 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+using namespace std;
+
+// ---------- Add Test Students ----------
+void addTestStudents() {
+    ofstream file("students.txt"); // overwrite file to avoid duplicates
+    file << "Awas,ATU001\n";
+    file << "Daniel,ATU002\n";
+    file << "Bright,ATU003\n";
+    file.close();
+}
+
+// ---------- Register Student ----------
+void registerStudent() {
+    string name, index;
+    ofstream file("students.txt", ios::app);
+
+    cout << "Enter student name: ";
+    cin.ignore();
+    getline(cin, name);
+
+    cout << "Enter index number: ";
+    getline(cin, index);
+
+    file << name << "," << index << endl;
+    file.close();
+
+    cout << "Student registered successfully!\n\n";
+}
+
+// ---------- View Students ----------
+void viewStudents() {
+    ifstream file("students.txt");
+    string line;
+
+    cout << "\n--- Registered Students ---\n";
+    while (getline(file, line)) {
+        cout << line << endl;
+    }
+    file.close();
+    cout << endl;
+}
+
+// ---------- Create Session ----------
+void createSession() {
+    cout << "Lecture session created successfully!\n\n";
+}
+
+// ---------- Search Student ----------
+void searchStudent() {
+    ifstream file("students.txt");
+    string line, searchIndex;
+    bool found = false;
+
+    cout << "Enter index number to search: ";
+    cin.ignore();
+    getline(cin, searchIndex);
+
+    while (getline(file, line)) {
+        string name, index;
+        stringstream ss(line);
+        getline(ss, name, ',');
+        getline(ss, index);
+
+        if (index == searchIndex) {
+            cout << "Student Found: " << name << " | " << index << endl;
+            found = true;
+        }
+    }
+
+    if (!found) {
+        cout << "Student not found.\n";
+    }
+
+    file.close();
+    cout << endl;
+}
+
+// ---------- Mark Attendance ----------
+void markAttendance() {
+    string index, status;
+    ofstream file("attendance.txt",
