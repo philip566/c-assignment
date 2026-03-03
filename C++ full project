@@ -1,1 +1,346 @@
+#include <stdio.h>
 
+#define MAX 100
+
+// Structure for student
+struct Student {
+    int id;
+    char name[50];
+    float marks;
+};
+
+int main() {
+    struct Student students[MAX];
+    int count = 0;
+    int choice;
+    int i;
+
+    do {
+        printf("\n==== STUDENT MANAGEMENT SYSTEM ====\n");
+        printf("1. Add Student\n");
+        printf("2. View Students\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch(choice) {
+
+            case 1:
+                if(count >= MAX) {
+                    printf("Student list is full!\n");
+                } else {
+                    printf("Enter Student ID: ");
+                    scanf("%d", &students[count].id);
+
+                    printf("Enter Student Name: ");
+                    scanf(" %[^\n]", students[count].name);
+
+                    printf("Enter Student Marks: ");
+                    scanf("%f", &students[count].marks);
+
+                    count++;
+                    printf("Student added successfully!\n");
+                }
+                break;
+
+            case 2:
+                if(count == 0) {
+                    printf("No students added yet.\n");
+                } else {
+                    printf("\n--- Student List ---\n");
+                    for(i = 0; i < count; i++) {
+                        printf("ID: %d\n", students[i].id);
+                        printf("Name: %s\n", students[i].name);
+                        printf("Marks: %.2f\n", students[i].marks);
+                        printf("--------------------\n");
+                    }
+                }
+                break;
+
+            case 3:
+                printf("Exiting program...\n");
+                break;
+
+            default:
+                printf("Invalid choice!\n");
+        }
+
+    } while(choice != 3);
+
+    return 0;
+}
+#include <stdio.h>
+
+#define MAX_SESSIONS 100
+
+// Structure to represent an Attendance Session
+struct AttendanceSession {
+    int sessionID;
+    char courseName[50];
+    char date[20];
+    int totalStudents;
+    int studentsPresent;
+};
+
+// Function to read a string safely without string.h
+void readString(char str[], int size) {
+    int i = 0;
+    char c;
+    while (i < size - 1) {
+        c = getchar();
+        if (c == '\n') break; // stop at newline
+        str[i++] = c;
+    }
+    str[i] = '\0'; // terminate string
+    // clear extra characters in buffer
+    while (c != '\n' && c != EOF) c = getchar();
+}
+
+// Function to create a new session
+void createSession(struct AttendanceSession sessions[], int *count) {
+    if (*count >= MAX_SESSIONS) {
+        printf("Maximum session limit reached!\n");
+        return;
+    }
+
+    printf("\nEnter Session ID: ");
+    scanf("%d", &sessions[*count].sessionID);
+    getchar(); // clear newline
+
+    printf("Enter Course Name: ");
+    readString(sessions[*count].courseName, 50);
+
+    printf("Enter Date (DD/MM/YYYY): ");
+    readString(sessions[*count].date, 20);
+
+    printf("Enter Total Students: ");
+    scanf("%d", &sessions[*count].totalStudents);
+
+    printf("Enter Number of Students Present: ");
+    scanf("%d", &sessions[*count].studentsPresent);
+
+    (*count)++;
+    printf("Lecture session created successfully!\n");
+}
+
+// Function to display all sessions
+void viewSessions(struct AttendanceSession sessions[], int count) {
+    if (count == 0) {
+        printf("\nNo sessions available.\n");
+        return;
+    }
+
+    printf("\n--- Attendance Sessions ---\n");
+
+    int i;
+    for (i = 0; i < count; i++) {
+        printf("\nSession ID: %d\n", sessions[i].sessionID);
+        printf("Course Name: %s\n", sessions[i].courseName);
+        printf("Date: %s\n", sessions[i].date);
+        printf("Total Students: %d\n", sessions[i].totalStudents);
+        printf("Students Present: %d\n", sessions[i].studentsPresent);
+
+        if (sessions[i].totalStudents > 0) {
+            float percentage = ((float)sessions[i].studentsPresent / sessions[i].totalStudents) * 100;
+            printf("Attendance Percentage: %.2f%%\n", percentage);
+        } else {
+            printf("Attendance Percentage: N/A (total students is zero)\n");
+        }
+    }
+}
+
+int main() {
+    struct AttendanceSession sessions[MAX_SESSIONS];
+    int sessionCount = 0;
+    int choice;
+    int running = 1;
+
+    while (running) {
+        printf("\n===== Attendance Management System =====\n");
+        printf("1. Create Lecture Session\n");
+        printf("2. View All Sessions\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar(); // clear newline
+
+        switch (choice) {
+            case 1:
+                createSession(sessions, &sessionCount);
+                break;
+            case 2:
+                viewSessions(sessions, sessionCount);
+                break;
+            case 3:
+                printf("Exiting program...\n");
+                running = 0;
+                break;
+            default:
+                printf("Invalid choice! Try again.\n");
+        }
+    }
+
+    return 0;
+}
+ #include <stdio.h>
+#include <string.h>
+
+#define MAX_STUDENTS 50
+
+// Structure to store student details
+struct Student {
+    int id;
+    char name[50];           // Needed to store names
+    int attendanceCount;     // Number of times present
+};
+
+// Global array to store students
+struct Student students[MAX_STUDENTS];
+int totalStudents = 0;       // Keeps track of number of students
+
+// Function to add a student
+void addStudent() {
+    if (totalStudents >= MAX_STUDENTS) {
+        printf("Student limit reached!\n");
+        return;
+    }
+
+    printf("Enter Student ID: ");
+    scanf("%d", &students[totalStudents].id);
+
+    printf("Enter Student Name: ");
+    scanf(" %[^\n]", students[totalStudents].name);
+
+    students[totalStudents].attendanceCount = 0; // Initially 0 attendance
+    totalStudents++;
+
+    printf("Student added successfully!\n");
+}
+
+// Function to mark attendance
+void markAttendance() {
+    if (totalStudents == 0) {
+        printf("No students available.\n");
+        return;
+    }
+
+    int id, i;
+    printf("Enter Student ID to mark attendance: ");
+    scanf("%d", &id);
+
+    int found = 0;
+
+    // i declared outside loop
+    for (i = 0; i < totalStudents; i++) {
+        if (students[i].id == id) {
+            int choice;
+
+            printf("1. Present\n");
+            printf("2. Absent\n");
+            printf("Enter choice: ");
+            scanf("%d", &choice);
+
+            if (choice == 1) {
+                students[i].attendanceCount++;
+                printf("Marked Present.\n");
+            } else if (choice == 2) {
+                printf("Marked Absent.\n");
+            } else {
+                printf("Invalid choice!\n");
+            }
+
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("Student not found!\n");
+    }
+}
+
+// Function to generate attendance report
+void generateReport() {
+    if (totalStudents == 0) {
+        printf("No students available.\n");
+        return;
+    }
+
+    int i;
+    printf("\n===== Attendance Report =====\n");
+
+    for (i = 0; i < totalStudents; i++) {
+        printf("ID: %d | Name: %s | Present: %d times\n",
+               students[i].id,
+               students[i].name,
+               students[i].attendanceCount);
+    }
+
+    printf("=============================\n");
+}
+
+// Function to display summary
+void generateSummary() {
+    int totalPresent = 0;
+    int i;
+
+    for (i = 0; i < totalStudents; i++) {
+        totalPresent += students[i].attendanceCount;
+    }
+
+    printf("\n===== Summary =====\n");
+    printf("Total Students: %d\n", totalStudents);
+    printf("Total Attendance Marked: %d\n", totalPresent);
+    printf("===================\n");
+}
+
+// Function for improved input validation
+int getValidChoice() {
+    int choice;
+    while (1) {
+        printf("\n1. Add Student\n");
+        printf("2. Mark Attendance\n");
+        printf("3. Generate Report\n");
+        printf("4. Generate Summary\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input! Please enter a number.\n");
+            while (getchar() != '\n'); // Clear input buffer
+        } else if (choice < 1 || choice > 5) {
+            printf("Choice must be between 1 and 5.\n");
+        } else {
+            return choice;
+        }
+    }
+}
+
+int main() {
+    int choice;
+
+    do {
+        choice = getValidChoice();
+
+        switch (choice) {
+            case 1:
+                addStudent();
+                break;
+            case 2:
+                markAttendance();
+                break;
+            case 3:
+                generateReport();
+                break;
+            case 4:
+                generateSummary();
+                break;
+            case 5:
+                printf("Exiting program...\n");
+                break;
+        }
+
+    } while (choice != 5);
+
+    return 0;
+}
